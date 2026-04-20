@@ -1,0 +1,19 @@
+stages:
+- test
+- deploy
+check_students_file:
+  stage: test
+  script:
+    - echo "Pārbaudām, vai eksistē Students.md"
+    - |
+      if [ ! -f Students.md ]; then
+        echo "Kļūda: fails Students.md nav atrasts"
+        exit 1
+      fi
+    - echo "Parādām faila saturu"
+    - cat Students.md
+    - echo "Pārbaude veiksmīgi izpildīta"
+demo_deploy:
+    stage: deploy
+    script:
+         - echo "Deploy veiksmīgs"
