@@ -1,13 +1,25 @@
-services:
+name: Build Test Push
 
-  web:
-    build: .
-    ports:
-      - "8082:80"
+on:
+  push:
+    branches: ["main"]
 
-  web-volume:
-    image: nginx:latest
-    ports:
-      - "8081:80"
-    volumes:
-      - ./webdata:/usr/share/nginx/html
+jobs:
+  build-test-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Run test
+        run: bash test.sh
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/gala_projekts .
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Push to Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/gala_projekts
